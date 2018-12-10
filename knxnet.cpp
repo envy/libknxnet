@@ -178,35 +178,35 @@ void knxnet::KNXnet::send(message_t &msg)
 
 bool knxnet::data_to_bool(uint8_t *data)
 {
-    return (data[0] & 0x01) == 1 ? true : false;
+	return (data[0] & 0x01) == 1 ? true : false;
 }
 
 int8_t knxnet::data_to_1byte_int(uint8_t *data)
 {
-    return (int8_t)data[1];
+	return (int8_t)data[1];
 }
 
 uint8_t knxnet::data_to_1byte_uint(uint8_t *data)
 {
-    return data[1];
+	return data[1];
 }
 
 int16_t knxnet::data_to_2byte_int(uint8_t *data)
 {
-    return (int16_t)((data[1] << 8) | data[2]);
+	return (int16_t)((data[1] << 8) | data[2]);
 }
 
 uint16_t knxnet::data_to_2byte_uint(uint8_t *data)
 {
-    return (uint16_t)((data[1] << 8) | data[2]);
+	return (uint16_t)((data[1] << 8) | data[2]);
 }
 
 float knxnet::data_to_2byte_float(uint8_t *data)
 {
-    //uint8_t  sign = (data[1] & 0b10000000) >> 7;
-    uint8_t  expo = (data[1] & 0b01111000) >> 3;
-    int16_t mant = ((data[1] & 0b10000111) << 8) | data[2];
-    return 0.01f * mant * pow(2, expo);
+	//uint8_t  sign = (data[1] & 0b10000000) >> 7;
+	uint8_t  expo = (data[1] & 0b01111000) >> 3;
+	int16_t mant = ((data[1] & 0b10000111) << 8) | data[2];
+	return 0.01f * mant * pow(2, expo);
 }
 
 /*
@@ -241,16 +241,24 @@ color_t knxnet::data_to_3byte_color(uint8_t *data)
 
 int32_t knxnet::data_to_4byte_int(uint8_t *data)
 {
-    return (int32_t)((data[1] << 24) | (data[2] << 16) | (data[3] << 8) | (data[4] << 0));
+	return (int32_t)((data[1] << 24) | (data[2] << 16) | (data[3] << 8) | (data[4] << 0));
 }
 
 uint32_t knxnet::data_to_4byte_uint(uint8_t *data)
 {
-    return (uint32_t)((data[1] << 24) | (data[2] << 16) | (data[3] << 8) | (data[4] << 0));
+	return (uint32_t)((data[1] << 24) | (data[2] << 16) | (data[3] << 8) | (data[4] << 0));
 }
 
 float knxnet::data_to_4byte_float(uint8_t *data)
 {
-    return (float)((data[1] << 24) | (data[2] << 16) | (data[3] << 8) |data[4]);
+	union {
+		float f;
+		uint8_t b[4];
+	} f;
+	f.b[0] = data[4];
+	f.b[1] = data[3];
+	f.b[2] = data[2];
+	f.b[3] = data[1];
+	return f.f;
 }
 
