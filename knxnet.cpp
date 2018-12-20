@@ -203,10 +203,23 @@ uint16_t knxnet::data_to_2byte_uint(uint8_t *data)
 
 float knxnet::data_to_2byte_float(uint8_t *data)
 {
-	//uint8_t  sign = (data[1] & 0b10000000) >> 7;
-	uint8_t  expo = (data[1] & 0b01111000) >> 3;
-	int16_t mant = ((data[1] & 0b10000111) << 8) | data[2];
-	return 0.01f * mant * pow(2, expo);
+	uint8_t sign =  (data[1] & 0b10000000) >> 7;
+	uint8_t expo =  (data[1] & 0b01111000) >> 3;
+	union {
+		uint8_t b[2];
+		int16_t i;
+	} mant;
+	mant.b[1] = (data[1] & 0b00000111);
+	mant.b[0] = data[2];
+	if (sign)
+	{
+		// negative
+		mant.i = ~mant.i;
+		mant.b[1] &= 0x07;
+		mant.i += 1;
+	}
+
+	return 0.01f * mant.i * pow(2, expo);
 }
 
 /*
