@@ -217,6 +217,7 @@ float knxnet::data_to_2byte_float(uint8_t *data)
 		mant.i = ~mant.i;
 		mant.b[1] &= 0x07;
 		mant.i += 1;
+		mant.i *= -1;
 	}
 
 	return 0.01f * mant.i * pow(2, expo);
